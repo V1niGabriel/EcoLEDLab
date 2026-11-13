@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistematização para Recuperação de Lâmpadas LED - Guia Operacional</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        emerald: {
+                            500: '#10B981',
+                            600: '#059669',
+                        },
+                        coral: {
+                            500: '#EF4444',
+                            600: '#DC2626',
+                        },
+                        amber: {
+                            500: '#F59E0B',
+                            600: '#D97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar & Smooth Behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Animations for Flowchart & LEDs */
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.7)); }
+            50% { filter: drop-shadow(0 0 14px rgba(16, 185, 129, 1)); }
+        }
+        .led-glow {
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes dashFlow {
+            to {
+                stroke-dashoffset: -24;
+            }
+        }
+        .flow-line-animated {
+            stroke-dasharray: 6, 6;
+            animation: dashFlow 1s linear infinite;
+        }
+
+        .step-highlight {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-300">
+
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <!-- Brand / Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm">
+                    <i data-lucide="lightbulb" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-base sm:text-lg tracking-tight">EcoLED<span class="text-emerald-500">Lab</span></span>
+                        <span class="hidden sm:inline-block text-[11px] font-mono uppercase px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold">SOP v2.4</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 hidden md:block">Sistematização Operacional para Recuperação e Reciclagem Solidária</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden lg:flex items-center gap-1 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <a href="#modo-bancada" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-emerald-500 transition flex items-center gap-1.5">
+                    <i data-lucide="cpu" class="w-4 h-4 text-emerald-500"></i> Modo Bancada
+                </a>
+                <a href="#fluxograma" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
+                    <i data-lucide="git-Fork" class="w-4 h-4 text-sky-500"></i> Fluxograma
+                </a>
+                <a href="#seguranca-epis" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> EPIs & Segurança
+                </a>
+                <a href="#guia-iniciantes" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
+                    <i data-lucide="microscope" class="w-4 h-4 text-purple-500"></i> Guia Visual SMD
+                </a>
+                <a href="#etapas-detalhadas" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
+                    <i data-lucide="list-checks" class="w-4 h-4 text-emerald-500"></i> 5 Etapas
+                </a>
+            </nav>
+
+            <!-- Action Controls -->
+            <div class="flex items-center gap-2">
+                <!-- Quick Parameter Pill -->
+                <div class="hidden xl:flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-mono">
+                    <span class="text-emerald-600 dark:text-emerald-400 font-semibold">⏱ 48h</span>
+                    <span class="text-slate-300 dark:text-slate-600">|</span>
+                    <span class="text-sky-600 dark:text-sky-400 font-semibold">⚡ 7V DC</span>
+                    <span class="text-slate-300 dark:text-slate-600">|</span>
+                    <span class="text-amber-600 dark:text-amber-400 font-semibold">🔥 ≥400°C</span>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" aria-label="Alternar Tema" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition">
+                    <i data-lucide="sun" id="theme-icon-light" class="w-5 h-5 hidden"></i>
+                    <i data-lucide="moon" id="theme-icon-dark" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Hero Banner & Summary -->
+        <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950 text-white p-6 sm:p-8 lg:p-10 border border-slate-800 shadow-xl">
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-8 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold tracking-wide uppercase">
+                        <i data-lucide="recycle" class="w-3.5 h-3.5"></i> Manual Técnico Operacional & Didático
+                    </div>
+                    <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                        Sistematização para Recuperação de Lâmpadas LED
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
+                        Protocolo padronizado de triagem, ensaio de saturação térmica (Burn-in de 48h), diagnóstico em bancada e retrabalho SMD com ponta faca (K-Knife). Projetado para capacitar técnicos e voluntários em projetos de manufatura reversa e reciclagem solidária com segurança máxima.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <a href="#modo-bancada" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm transition shadow-lg shadow-emerald-500/20">
+                            <i data-lucide="play" class="w-4 h-4 fill-current"></i> Iniciar Assistente de Bancada
+                        </a>
+                        <a href="#guia-iniciantes" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 transition">
+                            <i data-lucide="eye" class="w-4 h-4 text-emerald-400"></i> Ver Ilustrações SMD (Ponto Preto & Polaridade)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Critical Parameters Summary Box -->
+                <div class="lg:col-span-4 bg-slate-950/70 backdrop-blur-md border border-slate-800 p-5 rounded-xl space-y-3">
+                    <h2 class="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i> Parâmetros de Processo
+                    </h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                            <span class="text-xs text-slate-400 block">Burn-in (Estresse)</span>
+                            <span class="font-mono text-lg font-bold text-emerald-400">48 Horas</span>
+                            <span class="text-[11px] text-slate-500 block">Ininterruptas</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                            <span class="text-xs text-slate-400 block">Fonte de Bancada</span>
+                            <span class="font-mono text-lg font-bold text-sky-400">7,0 V DC</span>
+                            <span class="text-[11px] text-slate-500 block">Tensão Inicial LED</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                            <span class="text-xs text-slate-400 block">Ferro de Solda</span>
+                            <span class="font-mono text-lg font-bold text-amber-400">≥ 400 °C</span>
+                            <span class="text-[11px] text-slate-500 block">Remoção Rápida</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                            <span class="text-xs text-slate-400 block">Ponta Exigida</span>
+                            <span class="font-mono text-lg font-bold text-purple-400">K-Knife</span>
+                            <span class="text-[11px] text-slate-500 block">Tipo Faca Laminada</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 1: ASSISTENTE INTERATIVO DE BANCADA -->
+        <!-- ========================================== -->
+        <section id="modo-bancada" class="scroll-mt-20 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        <h2 class="text-xl sm:text-2xl font-bold tracking-tight">Modo Bancada: Assistente de Decisão Passo a Passo</h2>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Pegue uma lâmpada coletada e responda às perguntas abaixo. O sistema controla automaticamente os desvios e o retorno obrigatório ao Burn-in.</p>
+                </div>
+
+                <!-- Batch Session Counters -->
+                <div class="flex items-center gap-2 self-start sm:self-auto">
+                    <div class="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-mono flex items-center gap-2">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                        <span>Doação: <strong id="count-donated" class="text-sm">0</strong></span>
+                    </div>
+                    <div class="px-3 py-1.5 rounded-xl bg-coral-500/10 border border-coral-500/30 text-coral-600 dark:text-coral-400 text-xs font-mono flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                        <span>Banco Doador/Descarte: <strong id="count-discarded" class="text-sm">0</strong></span>
+                    </div>
+                    <button onclick="resetWizard()" class="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs font-semibold transition flex items-center gap-1" title="Reiniciar Lâmpada Atual">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Nova Lâmpada
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Wizard Card -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg overflow-hidden">
+                
+                <!-- Left Column: Current Active Step & Question -->
+                <div class="lg:col-span-8 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+                    <!-- Top Status Bar inside Wizard -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <span id="wiz-badge-stage" class="px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-emerald-500/10 text-emerald-500 border border-emerald-500/30">
+                                INÍCIO / ETAPA 1
+                            </span>
+                            <span id="wiz-badge-group" class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                Aguardando Classificação
+                            </span>
+                        </div>
+                        <div id="wiz-repair-flag" class="hidden items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                            <i data-lucide="wrench" class="w-3.5 h-3.5"></i> Unidade Reparada (Bulbo Aberto)
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Step Content -->
+                    <div id="wiz-body" class="space-y-5 my-auto">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- Dynamic Action Buttons -->
+                    <div id="wiz-actions" class="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-3">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Right Column: Real-time Lamp State & Trace Log -->
+                <div class="lg:col-span-4 bg-slate-50 dark:bg-slate-950/60 border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-slate-800 p-6 flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                            <i data-lucide="activity" class="w-4 h-4 text-emerald-500"></i> Estado Físico da Unidade Atual
+                        </h3>
+                        
+                        <!-- Status Pills -->
+                        <div class="grid grid-cols-2 gap-2.5 text-xs">
+                            <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                                <span class="text-slate-400 block text-[11px]">Alocação Atual</span>
+                                <span id="stat-group" class="font-bold text-slate-700 dark:text-slate-200">Não Alocada</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                                <span class="text-slate-400 block text-[11px]">Estado do Bulbo</span>
+                                <span id="stat-bulb" class="font-bold text-emerald-600 dark:text-emerald-400">Fechado (Original)</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                                <span class="text-slate-400 block text-[11px]">Alimentação</span>
+                                <span id="stat-power" class="font-bold text-amber-600 dark:text-amber-400">Rede AC (Triagem)</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                                <span class="text-slate-400 block text-[11px]">Retrabalho SMD</span>
+                                <span id="stat-repaired" class="font-bold text-slate-600 dark:text-slate-400">Nenhum</span>
+                            </div>
+                        </div>
+
+                        <!-- Step History Log -->
+                        <div class="space-y-2 pt-2">
+                            <span class="text-xs font-mono uppercase tracking-wider text-slate-400 block">Trilha de Rastreabilidade</span>
+                            <div id="wiz-history" class="space-y-1.5 max-h-48 overflow-y-auto pr-1 text-xs font-mono">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Helper Tip inside Wizard -->
+                    <div class="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-800 dark:text-sky-300 flex items-start gap-2.5">
+                        <i data-lucide="info" class="w-4 h-4 text-sky-500 shrink-0 mt-0.5"></i>
+                        <span>Clique em qualquer etapa no <strong>Fluxograma Visual</strong> abaixo se quiser inspecionar ou pular diretamente para uma etapa específica.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 2: FLUXOGRAMA VISUAL INTERATIVO    -->
+        <!-- ========================================== -->
+        <section id="fluxograma" class="scroll-mt-20 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2">
+                        <i data-lucide="git-fork" class="w-6 h-6 text-sky-500"></i>
+                        Fluxograma Lógico do Processo (5 Etapas + Loops de Retorno)
+                    </h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Clique em qualquer bloco do diagrama para carregar a etapa no Assistente ou rolar até as instruções detalhadas.</p>
+                </div>
+                <div class="flex items-center gap-4 text-xs font-mono">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> Caminho Grupo A / Aprovação</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-coral-500 inline-block"></span> Caminho Grupo B / Falha</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> Loop de Retorno</span>
+                </div>
+            </div>
+
+            <!-- Interactive Flowchart Diagram Container -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-md overflow-x-auto">
+                <div class="min-w-[880px] space-y-6">
+                    
+                    <!-- Top Row: Main Flow & Group A vs Group B Split -->
+                    <div class="grid grid-cols-12 gap-4 items-stretch">
+                        
+                        <!-- INÍCIO + ETAPA 1 -->
+                        <div class="col-span-3 flex flex-col justify-between">
+                            <div onclick="jumpToStep('etapa1')" class="cursor-pointer group p-4 rounded-xl bg-slate-100 dark:bg-slate-800/90 border-2 border-slate-300 dark:border-slate-700 hover:border-emerald-500 transition relative">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-slate-300 dark:bg-slate-700 font-bold">Início ➔ Etapa 1</span>
+                                    <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+                                </div>
+                                <h4 class="font-bold text-sm group-hover:text-emerald-500 transition">Triagem Inicial (Rede AC)</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Conectar à rede e observar visualmente.</p>
+                                <div class="mt-3 p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-center">
+                                    <span class="text-[11px] font-bold block text-amber-600 dark:text-amber-400">❓ Acende plenamente?</span>
+                                    <span class="text-[10px] text-slate-400">(Sem piscar / sem luz fraca)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ARROWS SPLIT -->
+                        <div class="col-span-2 flex flex-col justify-around py-2">
+                            <!-- SIM Path -->
+                            <div class="flex flex-col items-center">
+                                <span class="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">SIM ➔ GRUPO A</span>
+                                <div class="w-full h-0.5 bg-emerald-500 my-1.5 relative">
+                                    <span class="absolute -right-1 -top-1.5 text-emerald-500">▶</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 text-center">Previamente Funcionais</span>
+                            </div>
+
+                            <!-- NÃO Path -->
+                            <div class="flex flex-col items-center">
+                                <span class="text-[11px] font-mono font-bold text-coral-600 dark:text-coral-400 bg-coral-500/10 px-2 py-0.5 rounded border border-coral-500/30">NÃO ➔ GRUPO B</span>
+                                <div class="w-full h-0.5 bg-coral-500 my-1.5 relative">
+                                    <span class="absolute -right-1 -top-1.5 text-coral-500">▶</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 text-center">Apagada, fraca ou piscando</span>
+                            </div>
+                        </div>
+
+                        <!-- ETAPA 2 (TOP) & ETAPA 3 (BOTTOM) -->
+                        <div class="col-span-4 flex flex-col justify-between gap-4">
+                            <!-- Etapa 2 Card -->
+                            <div onclick="jumpToStep('etapa2')" class="cursor-pointer group p-4 rounded-xl bg-emerald-500/5 border-2 border-emerald-500/40 hover:border-emerald-500 transition">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 font-bold">Etapa 2 • Burn-in</span>
+                                    <span class="text-[11px] font-mono font-bold text-emerald-500">⏱ 48h Contínuas</span>
+                                </div>
+                                <h4 class="font-bold text-sm group-hover:text-emerald-500 transition">Teste de Estresse Térmico</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Recebe <strong>Grupo A</strong> e retornos da <strong>Etapa 5</strong>.</p>
+                                <div class="mt-2 p-1.5 rounded bg-white dark:bg-slate-900 border border-emerald-500/30 text-center text-[11px] font-semibold">
+                                    ❓ Aprovada após 48h sem falhas?
+                                </div>
+                            </div>
+
+                            <!-- Loop Arrow Between Etapa 2 Fail -> Grupo B / Etapa 3 -->
+                            <div class="flex items-center justify-center gap-2 py-1 px-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-[11px] font-mono">
+                                <i data-lucide="corner-left-down" class="w-4 h-4 shrink-0"></i>
+                                <span><strong>REPROVOU NAS 48h (NÃO):</strong> Remanejar p/ Grupo B (Desce p/ Etapa 3)</span>
+                            </div>
+
+                            <!-- Etapa 3 Card -->
+                            <div onclick="jumpToStep('etapa3')" class="cursor-pointer group p-4 rounded-xl bg-coral-500/5 border-2 border-coral-500/40 hover:border-coral-500 transition">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-coral-500/20 text-coral-600 dark:text-coral-300 font-bold">Etapa 3 • Exclusivo Grupo B</span>
+                                    <span class="text-[11px] font-mono font-bold text-sky-500">⚡ Teste 7V DC</span>
+                                </div>
+                                <h4 class="font-bold text-sm group-hover:text-coral-500 transition">Abertura e Inspeção de Bancada</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Abrir bulbo, buscar ponto preto ou testar LEDs a 7V.</p>
+                                <div class="mt-2 p-1.5 rounded bg-white dark:bg-slate-900 border border-coral-500/30 text-center text-[11px] font-semibold">
+                                    ❓ Falha restrita à matriz de LEDs?
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OUTCOMES: FIM VERDE & FIM VERMELHO -->
+                        <div class="col-span-3 flex flex-col justify-between gap-4">
+                            <!-- FIM VERDE -->
+                            <div class="p-4 rounded-xl bg-emerald-500/15 border-2 border-emerald-500 text-emerald-950 dark:text-emerald-100 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-emerald-500 text-slate-950">SIM (Aprovada 48h)</span>
+                                        <i data-lucide="award" class="w-5 h-5 text-emerald-500"></i>
+                                    </div>
+                                    <h4 class="font-extrabold text-sm mt-2 text-emerald-700 dark:text-emerald-300">Fechamento do Bulbo</h4>
+                                    <p class="text-[11px] text-emerald-800/80 dark:text-emerald-200/80 mt-0.5">(Se veio aberta da Etapa 5, colar/encaixar difusor).</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-emerald-500/30 flex items-center gap-1.5 font-bold text-xs text-emerald-700 dark:text-emerald-300">
+                                    <i data-lucide="heart-handshake" class="w-4 h-4 shrink-0"></i>
+                                    <span>FIM VERDE: Apta p/ Reuso e Doação Solidária</span>
+                                </div>
+                            </div>
+
+                            <!-- FIM VERMELHO -->
+                            <div class="p-4 rounded-xl bg-coral-500/15 border-2 border-coral-500 text-coral-950 dark:text-coral-100 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-coral-500 text-white">NÃO (Defeito Driver)</span>
+                                        <i data-lucide="ban" class="w-5 h-5 text-coral-500"></i>
+                                    </div>
+                                    <h4 class="font-extrabold text-sm mt-2 text-coral-700 dark:text-coral-300">Fora do Escopo de Reparo</h4>
+                                    <p class="text-[11px] text-coral-800/80 dark:text-coral-200/80 mt-0.5">Circuito driver danificado; LEDs íntegros.</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-coral-500/30 flex items-center gap-1.5 font-bold text-xs text-coral-700 dark:text-coral-300">
+                                    <i data-lucide="package-plus" class="w-4 h-4 shrink-0"></i>
+                                    <span>FIM VERMELHO: Banco Doador de SMD / Descarte</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Row: Repair Pipeline (Etapa 3 SIM -> Etapa 4 -> Etapa 5 -> Mandatory Return Loop to Etapa 2) -->
+                    <div class="pt-4 border-t border-dashed border-slate-200 dark:border-slate-800 grid grid-cols-12 gap-4 items-center">
+                        <div class="col-span-3 text-right pr-2">
+                            <span class="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/30">
+                                <i data-lucide="corner-down-right" class="w-4 h-4"></i>
+                                Etapa 3 = SIM (Só LED Queimado)
+                            </span>
+                        </div>
+
+                        <!-- ETAPA 4 -->
+                        <div onclick="jumpToStep('etapa4')" class="col-span-3 cursor-pointer group p-4 rounded-xl bg-slate-100 dark:bg-slate-800/90 border-2 border-slate-300 dark:border-slate-700 hover:border-amber-500 transition">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold">Etapa 4</span>
+                                <span class="text-[11px] font-mono font-bold text-amber-500">🔥 ≥400°C K-Knife</span>
+                            </div>
+                            <h4 class="font-bold text-sm group-hover:text-amber-500 transition">Remoção do LED Avariado</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Romper fósforo amarelo e fundir base metálica com ponta faca.</p>
+                        </div>
+
+                        <!-- ETAPA 5 -->
+                        <div onclick="jumpToStep('etapa5')" class="col-span-3 cursor-pointer group p-4 rounded-xl bg-slate-100 dark:bg-slate-800/90 border-2 border-slate-300 dark:border-slate-700 hover:border-emerald-500 transition">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold">Etapa 5</span>
+                                <span class="text-[11px] font-mono font-bold text-emerald-500">+ / - Polaridade</span>
+                            </div>
+                            <h4 class="font-bold text-sm group-hover:text-emerald-500 transition">Substituição SMD Doador</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Renovar pasta térmica e soldar diodo do Banco Doador.</p>
+                        </div>
+
+                        <!-- MANDATORY LOOP BACK TO ETAPA 2 -->
+                        <div onclick="jumpToStep('etapa2')" class="col-span-3 cursor-pointer p-3.5 rounded-xl bg-amber-500/15 border-2 border-dashed border-amber-500 text-amber-900 dark:text-amber-200 hover:bg-amber-500/25 transition">
+                            <div class="flex items-center gap-2 font-mono text-xs font-bold text-amber-600 dark:text-amber-400">
+                                <i data-lucide="repeat" class="w-4 h-4 shrink-0"></i>
+                                <span>RETORNO OBRIGATÓRIO</span>
+                            </div>
+                            <p class="text-[11px] mt-1 leading-snug">
+                                Volta para a <strong>Etapa 2 (Burn-in 48h)</strong> com o bulbo ainda aberto. Só fecha após aprovação!
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 3: CHECKLIST EPIs & SEGURANÇA      -->
+        <!-- ========================================== -->
+        <section id="seguranca-epis" class="scroll-mt-20 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left: Interactive Checklist of Tools, Supplies & PPE -->
+            <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-md flex flex-col justify-between space-y-6">
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <i data-lucide="wrench" class="w-5 h-5 text-emerald-500"></i>
+                            1. Checklist de Ferramentas, Insumos e EPIs
+                        </h2>
+                        <span id="tools-progress-text" class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500">0/9 Prontos</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Antes de iniciar a operação em bancada, confira e marque os itens disponíveis na estação de trabalho:</p>
+                    
+                    <!-- Progress Bar -->
+                    <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div id="tools-progress-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Checkboxes Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="tools-checklist">
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition select-none">
+                        <input type="checkbox" onchange="updateToolsProgress()" class="tool-check mt-1 w-4 h-4 accent-emerald-500 rounded">
+                        <div class="text-xs">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Fonte de Bancada Ajustável</span>
+                            <span class="text-slate-500">Ajuste fino (inicial em 7,0 V DC) com limitação de corrente.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition select-none">
+                        <input type="checkbox" onchange="updateToolsProgress()" class="tool-check mt-1 w-4 h-4 accent-emerald-500 rounded">
+                        <div class="text-xs">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Ferro de Solda + Ponta K-Knife</span>
+                            <span class="text-slate-500">Estação capaz de atingir ≥ 400°C com ponteira tipo faca.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition select-none">
+                        <input type="checkbox" onchange="updateToolsProgress()" class="tool-check mt-1 w-4 h-4 accent-emerald-500 rounded">
+                        <div class="text-xs">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Espátula Metálica Fina</span>
+                            <span class="text-slate-500">Para abertura da junção lateral do bulbo e raspagem do fósforo.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition select-none">
+                        <input type="checkbox" onchange="updateToolsProgress()" class="tool-check mt-1 w-4 h-4 accent-emerald-500 rounded">
+                        <div class="text-xs">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Pinça Antiestática (ESD)</span>
+                            <span class="text-slate-500">Ponta fina para posicionamento preciso do diodo SMD doador.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition select-none">
+                        <input type="checkbox" onchange="updateToolsProgress()" class="tool-check mt-1 w-4 h-4 accent-emerald-500 rounded">
+                        <div class="text-xs">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Pasta Térmica & Solda Estanho</span>
+                            <span class="text-slate-500">Para acoplamento térmico da MCPCB e ressoldagem SMD.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition select-none">
+                        <input type="checkbox" onchange="updateToolsProgress()" class="tool-check mt-1 w-4 h-4 accent-emerald-500 rounded">
+                        <div class="text-xs">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Álcool Isopropílico 99%</span>
+                            <span class="text-slate-500">Higienização de resíduos de fluxo e fuligem após remoção.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition select-none">
+                        <input type="checkbox" onchange="updateToolsProgress()" class="tool-check mt-1 w-4 h-4 accent-emerald-500 rounded">
+                        <div class="text-xs">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">EPI: Óculos de Proteção</span>
+                            <span class="text-slate-500">Obrigatório ao romper o encapsulamento e abrir o difusor.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition select-none">
+                        <input type="checkbox" onchange="updateToolsProgress()" class="tool-check mt-1 w-4 h-4 accent-emerald-500 rounded">
+                        <div class="text-xs">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">EPI: Luvas Isolantes / Térmicas</span>
+                            <span class="text-slate-500">Proteção no manuseio em rede elétrica e torque mecânico.</span>
+                        </div>
+                    </label>
+
+                    <label class="sm:col-span-2 flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition select-none">
+                        <input type="checkbox" onchange="updateToolsProgress()" class="tool-check mt-1 w-4 h-4 accent-emerald-500 rounded">
+                        <div class="text-xs">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Bancada de Teste Burn-in (48h) + Exaustor de Fumos</span>
+                            <span class="text-slate-500">Painel com bocais E27 ventilados para maturação térmica de 48h e exaustão de vapores de solda.</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex justify-end">
+                    <button onclick="checkAllTools()" class="text-xs font-mono text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
+                        <i data-lucide="check-check" class="w-3.5 h-3.5"></i> Marcar todos os equipamentos como conferidos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Electrical & Thermal Safety Protocol -->
+            <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-md space-y-5">
+                <h2 class="text-xl font-bold flex items-center gap-2 text-amber-500">
+                    <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                    2. Protocolo de Segurança Elétrica e Térmica
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                    Iniciantes confundem frequentemente o momento de usar a rede elétrica (AC) com o momento de usar a bancada (DC). Respeite rigorosamente esta separação:
+                </p>
+
+                <!-- Alert 1: AC vs DC -->
+                <div class="p-4 rounded-xl bg-coral-500/10 border-l-4 border-coral-500 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold uppercase text-coral-600 dark:text-coral-400">⚡ Perigo de Choque Elétrico (AC vs DC)</span>
+                        <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-coral-500 text-white font-bold">REGRA DE OURO</span>
+                    </div>
+                    <ul class="text-xs space-y-1.5 text-slate-700 dark:text-slate-300 list-disc pl-4">
+                        <li><strong>Etapas 1 e 2 (Rede AC 127V/220V):</strong> A lâmpada está conectada à rede elétrica. <strong>JAMAIS</strong> toque na placa interna (MCPCB) com a lâmpada rosqueada no bocal AC, especialmente no retorno da Etapa 5 (bulbo aberto).</li>
+                        <li><strong>Etapa 3 (Teste de Bancada 7V DC):</strong> O teste individual com pontas de prova ocorre com a lâmpada <strong>TOTALMENTE DESCONECTADA DA REDE ELÉTRICA</strong>, alimentada apenas pela fonte de bancada em baixa tensão contínua (7V).</li>
+                    </ul>
+                </div>
+
+                <!-- Alert 2: Thermal 400C -->
+                <div class="p-4 rounded-xl bg-amber-500/10 border-l-4 border-amber-500 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold uppercase text-amber-600 dark:text-amber-400">🔥 Risco Térmico Elevado (≥ 400°C)</span>
+                        <span class="text-[11px] font-mono text-amber-500 font-bold">Etapa 4 e 5</span>
+                    </div>
+                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                        A placa de lâmpadas LED é feita de alumínio (MCPCB), que dissipa calor rapidamente. Por isso usamos <strong>mínimo de 400°C</strong>. A carcaça metálica inteira esquenta! Fixe a lâmpada em um suporte (terceira mão/morsa) e nunca segure a placa com os dedos durante a soldagem.
+                    </p>
+                </div>
+
+                <!-- Alert 3: Fumes & Phosphor -->
+                <div class="p-4 rounded-xl bg-sky-500/10 border-l-4 border-sky-500 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold uppercase text-sky-600 dark:text-sky-400">💨 Fumos de Solda e Partículas de Fósforo</span>
+                        <span class="text-[11px] font-mono text-sky-500 font-bold">Saúde Ocupacional</span>
+                    </div>
+                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                        Ao raspar a camada amarela de fósforo (Etapa 4), use óculos de proteção para evitar projeção ocular. Ao fundir a solda a 400°C, mantenha o exaustor ligado ou trabalhe em ambiente ventilado para não inalar vapores de resina/fluxo.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 4: DETALHAMENTO TÉCNICO ILUSTRADO  -->
+        <!-- ========================================== -->
+        <section id="guia-iniciantes" class="scroll-mt-20 space-y-4">
+            <div>
+                <h2 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2">
+                    <i data-lucide="microscope" class="w-6 h-6 text-purple-500"></i>
+                    3. Guia Técnico Ilustrado para Iniciantes (Inspeção, Polaridade e Abertura)
+                </h2>
+                <p class="text-sm text-slate-600 dark:text-slate-400">Aprenda visualmente os 3 fundamentos práticos indispensáveis antes de abrir e soldar uma lâmpada LED.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Visual Card 1: Black Dot Identification -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-md flex flex-col justify-between space-y-4">
+                    <div class="space-y-1">
+                        <span class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-bold">Fundamento 01 • Etapa 3</span>
+                        <h3 class="text-base font-bold pt-1">Como Identificar o "Ponto Preto" (Queima)</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Os LEDs são ligados em série. Quando apenas um queima, ele abre o circuito e apaga a lâmpada inteira.</p>
+                    </div>
+
+                    <!-- Custom SVG Comparison: Healthy LED vs Burnt LED -->
+                    <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-around">
+                        <!-- Healthy SMD -->
+                        <div class="text-center space-y-2">
+                            <svg class="w-24 h-24 mx-auto" viewBox="0 0 100 100">
+                                <!-- SMD Package Body -->
+                                <rect x="15" y="20" width="70" height="60" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="3"/>
+                                <!-- Metallic Pads -->
+                                <rect x="10" y="32" width="6" height="36" rx="2" fill="#cbd5e1"/>
+                                <rect x="84" y="32" width="6" height="36" rx="2" fill="#cbd5e1"/>
+                                <!-- Yellow Phosphor Dome -->
+                                <circle cx="50" cy="50" r="24" fill="#facc15" stroke="#eab308" stroke-width="2"/>
+                                <!-- Healthy Specular Highlight -->
+                                <ellipse cx="43" cy="42" rx="7" ry="4" fill="#fef08a" opacity="0.8"/>
+                            </svg>
+                            <span class="inline-block text-[11px] font-mono font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">✔ LED Saudável</span>
+                            <p class="text-[11px] text-slate-500">Superfície amarela uniforme e limpa</p>
+                        </div>
+
+                        <div class="h-24 w-px bg-slate-300 dark:bg-slate-800"></div>
+
+                        <!-- Burnt SMD (Black Dot) -->
+                        <div class="text-center space-y-2">
+                            <svg class="w-24 h-24 mx-auto" viewBox="0 0 100 100">
+                                <!-- SMD Package Body -->
+                                <rect x="15" y="20" width="70" height="60" rx="8" fill="#e2e8f0" stroke="#ef4444" stroke-width="2.5"/>
+                                <!-- Metallic Pads -->
+                                <rect x="10" y="32" width="6" height="36" rx="2" fill="#cbd5e1"/>
+                                <rect x="84" y="32" width="6" height="36" rx="2" fill="#cbd5e1"/>
+                                <!-- Yellow Phosphor Dome -->
+                                <circle cx="50" cy="50" r="24" fill="#eab308" stroke="#ca8a04" stroke-width="2"/>
+                                <!-- Burn Mark / Carbonized Crater -->
+                                <circle cx="52" cy="51" r="6" fill="#18181b"/>
+                                <circle cx="52" cy="51" r="10" fill="none" stroke="#713f12" stroke-width="1.5" stroke-dasharray="2 2"/>
+                                <!-- Target Crosshair -->
+                                <line x1="52" y1="33" x2="52" y2="41" stroke="#ef4444" stroke-width="2"/>
+                                <line x1="52" y1="61" x2="52" y2="69" stroke="#ef4444" stroke-width="2"/>
+                                <line x1="34" y1="51" x2="42" y2="51" stroke="#ef4444" stroke-width="2"/>
+                                <line x1="62" y1="51" x2="70" y2="51" stroke="#ef4444" stroke-width="2"/>
+                            </svg>
+                            <span class="inline-block text-[11px] font-mono font-bold text-coral-500 bg-coral-500/10 px-2 py-0.5 rounded">✖ Ponto Preto (Queima)</span>
+                            <p class="text-[11px] text-slate-500">Fissura ou ponto escuro carbonizado</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                        <strong>E se nenhum LED tiver ponto preto?</strong>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Um LED pode queimar internamente sem escurecer o fósforo. Nesse caso, use a <strong>Fonte de Bancada a 7V</strong> para testar um por um.</p>
+                    </div>
+                </div>
+
+                <!-- Visual Card 2: SMD Polarity (Anode + / Cathode -) -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-md flex flex-col justify-between space-y-4">
+                    <div class="space-y-1">
+                        <span class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-bold">Fundamento 02 • Etapa 5</span>
+                        <h3 class="text-base font-bold pt-1">Polaridade SMD: Ânodo (+) e Cátodo (-)</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">O LED é um diodo polarizado: se for soldado invertido, não conduz corrente e a lâmpada não acenderá.</p>
+                    </div>
+
+                    <!-- Custom SVG: SMD Pads & Footprint Asymmetry -->
+                    <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+                        <svg class="w-full h-36" viewBox="0 0 260 120">
+                            <!-- Title Labels -->
+                            <text x="65" y="15" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="monospace" font-weight="bold">BASE DO LED (FUNDO)</text>
+                            <text x="195" y="15" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="monospace" font-weight="bold">TRILHA NA PLACA (MCPCB)</text>
+
+                            <!-- Left Diagram: Bottom of SMD 2835 -->
+                            <rect x="20" y="28" width="90" height="64" rx="6" fill="#334155" stroke="#64748b" stroke-width="2"/>
+                            <!-- Corner Notch for Cathode -->
+                            <polygon points="95,28 110,28 110,43" fill="#0f172a"/>
+                            <!-- Small Pad (Anode +) -->
+                            <rect x="26" y="36" width="24" height="48" rx="3" fill="#fbbf24"/>
+                            <text x="38" y="65" text-anchor="middle" fill="#0f172a" font-size="16" font-weight="bold">+</text>
+                            <!-- Large Thermal Pad (Cathode -) -->
+                            <rect x="56" y="36" width="46" height="48" rx="3" fill="#38bdf8"/>
+                            <text x="79" y="65" text-anchor="middle" fill="#0f172a" font-size="16" font-weight="bold">−</text>
+
+                            <!-- Divider -->
+                            <line x1="130" y1="20" x2="130" y2="105" stroke="#475569" stroke-dasharray="3 3"/>
+
+                            <!-- Right Diagram: PCB Copper Footprint -->
+                            <rect x="150" y="28" width="90" height="64" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+                            <!-- Silkscreen + and - -->
+                            <text x="160" y="42" fill="#10b981" font-size="12" font-family="monospace" font-weight="bold">+</text>
+                            <text x="230" y="42" fill="#ef4444" font-size="12" font-family="monospace" font-weight="bold">-</text>
+                            <!-- Small Solder Pad (+) -->
+                            <rect x="160" y="46" width="22" height="36" rx="2" fill="#94a3b8"/>
+                            <!-- Large Solder Pad (-) -->
+                            <rect x="188" y="46" width="42" height="36" rx="2" fill="#94a3b8"/>
+
+                            <!-- Bottom Captions -->
+                            <text x="65" y="110" text-anchor="middle" fill="#10b981" font-size="9.5" font-family="sans-serif" font-weight="bold">Terminal Menor = + | Maior = −</text>
+                            <text x="195" y="110" text-anchor="middle" fill="#38bdf8" font-size="9.5" font-family="sans-serif" font-weight="bold">Casar formato na soldagem</text>
+                        </svg>
+                    </div>
+
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                        <strong>Regra Prática Infealível (SMD 2835 / 5730):</strong>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Vire o LED doador de cabeça para baixo: ele possui um <strong>pad metálico estreito (Ânodo +)</strong> e um <strong>pad metálico largo (Cátodo − / dissipador)</strong>. Basta alinhar com o desenho idêntico na placa!</p>
+                    </div>
+                </div>
+
+                <!-- Visual Card 3: Mechanical Opening (Counter-Clockwise Torque) -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-md flex flex-col justify-between space-y-4">
+                    <div class="space-y-1">
+                        <span class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-500 font-bold">Fundamento 03 • Etapa 3</span>
+                        <h3 class="text-base font-bold pt-1">Abertura Sem Trincar Bulbo ou Carcaça</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">O difusor leitoso é fixado com silicone térmico adesivo e uma trava plástica periférica.</p>
+                    </div>
+
+                    <!-- Custom SVG: Bulb Torque & Spatula Insertion -->
+                    <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+                        <svg class="w-full h-36" viewBox="0 0 260 120">
+                            <!-- Lamp Bulb Dome -->
+                            <path d="M90,55 C90,15 170,15 170,55 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+                            <!-- Counter-Clockwise Rotation Arrow -->
+                            <path d="M105,35 C120,25 140,25 155,35" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+                            <polygon points="102,37 110,29 112,39" fill="#10b981"/>
+                            <text x="130" y="22" text-anchor="middle" fill="#10b981" font-size="9.5" font-family="monospace" font-weight="bold">TORQUE ANTI-HORÁRIO ↺</text>
+
+                            <!-- Seam Line (Junction) -->
+                            <line x1="86" y1="57" x2="174" y2="57" stroke="#f59e0b" stroke-width="3"/>
+
+                            <!-- Metal Spatula Entering Seam -->
+                            <rect x="180" y="53" width="60" height="7" rx="2" fill="#38bdf8" stroke="#0284c7" stroke-width="1.5"/>
+                            <polygon points="170,56.5 180,53 180,60" fill="#bae6fd"/>
+                            <text x="210" y="47" text-anchor="middle" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold">ESPÁTULA NA JUNÇÃO</text>
+
+                            <!-- Lamp Body / Heatsink -->
+                            <path d="M92,59 L168,59 L155,95 L105,95 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                            <!-- E27 Screw Base -->
+                            <rect x="112" y="95" width="36" height="18" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                        <strong>Dica de Ouro para Não Amassar:</strong>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Segure firme na junção (nunca aperte o meio do domo plástico como um ovo). Se o giro manual anti-horário estiver travado por excesso de cola, passe a <strong>espátula metálica fina</strong> ao redor do friso para romper o selante antes de girar.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 5: AS 5 ETAPAS COM CHECKLISTS      -->
+        <!-- ========================================== -->
+        <section id="etapas-detalhadas" class="scroll-mt-20 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2">
+                        <i data-lucide="list-checks" class="w-6 h-6 text-emerald-500"></i>
+                        Manual Operacional Detalhado: As 5 Etapas do Processo
+                    </h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Siga as listas de verificação abaixo em cada etapa para garantir repetibilidade e qualidade técnica.</p>
+                </div>
+                <button onclick="resetStepChecklists()" class="self-start sm:self-auto px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs font-mono font-semibold transition flex items-center gap-1.5">
+                    <i data-lucide="Eraser" class="w-4 h-4"></i> Limpar Marcações das Etapas
+                </button>
+            </div>
+
+            <div class="space-y-6">
+
+                <!-- CARD ETAPA 1 -->
+                <article id="card-etapa1" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-md transition-all">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono font-extrabold flex items-center justify-center text-sm">01</span>
+                            <div>
+                                <h3 class="text-lg font-bold">Etapa 1: Triagem Inicial (Energização na Rede Elétrica)</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Ponto de partida após a Coleta de Lâmpadas LED</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">⚡ Rede AC 127V/220V</span>
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Sem Ferramentas Especiais</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-5">
+                        <!-- Checklist Column -->
+                        <div class="lg:col-span-7 space-y-3">
+                            <h4 class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">Procedimento de Bancada (Checklist)</h4>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>1.1 Inspeção Externa Rápida:</strong> Verificar se a rosca metálica E27 e o bulbo difusor estão íntegros para conexão segura.</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>1.2 Energização Direta:</strong> Conectar a lâmpada ao bocal ligado à rede elétrica e acionar o interruptor.</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>1.3 Observação Visual Direta:</strong> Avaliar se há emissão luminosa plena e estável, ou se apresenta cintilação (piscando), luz fraca ("efeito vagalume") ou ausência total de luz.</span>
+                            </label>
+                        </div>
+
+                        <!-- Decision Box Column -->
+                        <div class="lg:col-span-5 p-5 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
+                            <div>
+                                <span class="text-[11px] font-mono uppercase text-amber-500 font-bold block">Pergunta de Decisão</span>
+                                <h4 class="text-base font-bold mt-0.5">"A lâmpada acende plenamente?"</h4>
+                            </div>
+
+                            <div class="space-y-2.5 text-xs">
+                                <div class="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200">
+                                    <strong class="text-emerald-600 dark:text-emerald-400 block">✔ Caminho SIM: Alocar no GRUPO A</strong>
+                                    Unidades previamente funcionais. Seguem diretamente para a <strong>Etapa 2 (Teste de Estresse 48h)</strong>.
+                                </div>
+                                <div class="p-3 rounded-lg bg-coral-500/10 border border-coral-500/30 text-coral-900 dark:text-coral-200">
+                                    <strong class="text-coral-600 dark:text-coral-400 block">✖ Caminho NÃO: Alocar no GRUPO B</strong>
+                                    <em>Regra Crítica:</em> Lâmpadas totalmente apagadas, com baixa intensidade luminosa ou piscando (cintilação intermitente) vão imediatamente para o <strong>Grupo B ➔ Etapa 3</strong>.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CARD ETAPA 2 -->
+                <article id="card-etapa2" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-md transition-all">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-emerald-500 text-slate-950 font-mono font-extrabold flex items-center justify-center text-sm">02</span>
+                            <div>
+                                <h3 class="text-lg font-bold">Etapa 2: Teste de Estresse / Burn-in (48h Contínuas)</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Ensaio de saturação térmica para o Grupo A e unidades recém-reparadas da Etapa 5</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">⏱ 48 Horas Ininterruptas</span>
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">Saturação Térmica</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-5">
+                        <div class="lg:col-span-7 space-y-3">
+                            <h4 class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">Procedimento de Bancada (Checklist)</h4>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>2.1 Instalação no Painel Burn-in:</strong> Conectar as unidades do Grupo A (fechadas) e as unidades vindas da Etapa 5 (ainda com o bulbo aberto).</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>2.2 Regime Contínuo de 48h:</strong> Manter acesas ininterruptamente por 48 horas sob monitoramento para validar estabilidade sob saturação térmica.</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>2.3 Fechamento do Bulbo (Pós-Aprovação):</strong> Para as unidades aprovadas que vieram da Etapa 5, recolocar e fixar o bulbo difusor somente agora após o término das 48h.</span>
+                            </label>
+                        </div>
+
+                        <div class="lg:col-span-5 p-5 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
+                            <div>
+                                <span class="text-[11px] font-mono uppercase text-emerald-500 font-bold block">Pergunta de Decisão</span>
+                                <h4 class="text-base font-bold mt-0.5">"Aprovada sem falhas (fluxo uniforme, sem oscilação, integridade térmica)?"</h4>
+                            </div>
+
+                            <div class="space-y-2.5 text-xs">
+                                <div class="p-3 rounded-lg bg-emerald-500/15 border border-emerald-500 text-emerald-950 dark:text-emerald-100">
+                                    <strong class="text-emerald-600 dark:text-emerald-400 block">✔ Caminho SIM: Fechamento do Bulbo ➔ FIM VERDE</strong>
+                                    Fechar o bulbo (se veio aberta da Etapa 5). <strong>Unidade Apta para Reuso e Doação Solidária!</strong>
+                                </div>
+                                <div class="p-3 rounded-lg bg-coral-500/10 border border-coral-500/30 text-coral-900 dark:text-coral-200">
+                                    <strong class="text-coral-600 dark:text-coral-400 block">✖ Caminho NÃO: Remanejar para o GRUPO B</strong>
+                                    Apresentou piscamento, queda de fluxo ou apagou durante as 48h? Vai imediatamente para o <strong>Grupo B (Etapa 3)</strong>.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CARD ETAPA 3 -->
+                <article id="card-etapa3" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-md transition-all">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-coral-500 text-white font-mono font-extrabold flex items-center justify-center text-sm">03</span>
+                            <div>
+                                <h3 class="text-lg font-bold">Etapa 3: Inspeção e Abertura (Exclusivo Grupo B)</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Desmontagem do difusor, inspeção óptica e ensaio elétrico individual em bancada</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-500/30">⚡ Fonte de Bancada: 7 V DC</span>
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Torque Anti-horário / Espátula</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-5">
+                        <div class="lg:col-span-7 space-y-3">
+                            <h4 class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">Procedimento de Bancada (Checklist)</h4>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>3.1 Ação 1 (Abertura Mecânica):</strong> Com a lâmpada desconectada, remover o bulbo difusor aplicando torque manual anti-horário ou inserindo a espátula metálica na junção lateral.</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>3.2 Ação 2 (Inspeção Visual):</strong> Buscar pontos escurecidos ("ponto preto") na superfície amarelada de fósforo dos diodos SMD (indicativo visual direto de queima).</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>3.3 Ação 3 (Teste de Bancada a 7V):</strong> Se não houver defeito visual aparente, ajustar a fonte de bancada inicialmente em <strong>7 V DC</strong> (ajustando conforme especificação do chip, ex: 6V, 9V ou 18V) e testar cada LED individualmente.</span>
+                            </label>
+                        </div>
+
+                        <div class="lg:col-span-5 p-5 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
+                            <div>
+                                <span class="text-[11px] font-mono uppercase text-coral-500 font-bold block">Pergunta de Decisão</span>
+                                <h4 class="text-base font-bold mt-0.5">"A falha é restrita à matriz de LEDs?"</h4>
+                            </div>
+
+                            <div class="space-y-2.5 text-xs">
+                                <div class="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200">
+                                    <strong class="text-emerald-600 dark:text-emerald-400 block">✔ Caminho SIM: Avança para a Etapa 4</strong>
+                                    LED(s) queimado(s) identificado(s) e marcados na placa MCPCB. Segue para remoção térmica.
+                                </div>
+                                <div class="p-3 rounded-lg bg-coral-500/15 border border-coral-500 text-coral-950 dark:text-coral-100">
+                                    <strong class="text-coral-600 dark:text-coral-400 block">✖ Caminho NÃO (Defeito no Circuito Driver) ➔ FIM VERMELHO</strong>
+                                    Todos os LEDs acendem na fonte de 7V, logo a falha está no Driver AC/DC (fora do escopo de reparo). <strong>Destinar a placa ao Banco Doador de Componentes e o restante ao Descarte Ambientalmente Adequado.</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CARD ETAPA 4 -->
+                <article id="card-etapa4" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-md transition-all">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 font-mono font-extrabold flex items-center justify-center text-sm">04</span>
+                            <div>
+                                <h3 class="text-lg font-bold">Etapa 4: Remoção do Componente Avariado</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Remoção termomecânica rápida para preservar as ilhas de cobre da MCPCB</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">🔥 Mínimo 400 °C</span>
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/30">🔪 Ponta Faca (K-Knife)</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-5">
+                        <div class="lg:col-span-8 space-y-3">
+                            <h4 class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">Procedimento de Bancada (Checklist)</h4>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>4.1 Ação 1 (Exposição do Terminal):</strong> Com espátula ou pinça rígida, romper mecanicamente a camada superior de encapsulamento de fósforo (parte amarela e plástica) do LED queimado até expor seu terminal metálico interno.</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>4.2 Ação 2 (Fusão Direta com Ponta Faca):</strong> Com o ferro de solda equipado com <strong>ponta faca (K-knife) a no mínimo 400°C</strong>, encostar a face laminada diretamente sobre o terminal metálico exposto para transferir calor imediato, fundir a solda inferior e deslizar a base residual sem arrancar a trilha da placa.</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>4.3 Limpeza da Ilha (Pads):</strong> Limpar os dois terminais na placa com álcool isopropílico e renovar levemente o estanho nas ilhas (+) e (-).</span>
+                            </label>
+                        </div>
+
+                        <div class="lg:col-span-4 p-5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex flex-col justify-center space-y-2">
+                            <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-sm">
+                                <i data-lucide="flame" class="w-5 h-5 shrink-0"></i>
+                                <span>Por que quebrar o fósforo antes?</span>
+                            </div>
+                            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                                O plástico e o silicone do LED atuam como isolantes térmicos. Ao remover a camada amarela e encostar a face chata da <strong>ponta K-Knife a ≥ 400°C</strong> direto no metal interno do LED, a solda derrete em 2 a 3 segundos sem cozinhar o verniz da placa!
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CARD ETAPA 5 -->
+                <article id="card-etapa5" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-md transition-all">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-sky-500 text-slate-950 font-mono font-extrabold flex items-center justify-center text-sm">05</span>
+                            <div>
+                                <h3 class="text-lg font-bold">Etapa 5: Substituição e Retorno Obrigatório ao Teste</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Transplante de diodo SMD do Banco Doador e encaminhamento para validação térmica</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">Banco Doador SMD</span>
+                            <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">🔄 Retorno à Etapa 2 (48h)</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-5">
+                        <div class="lg:col-span-7 space-y-3">
+                            <h4 class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">Procedimento de Bancada (Checklist)</h4>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>5.1 Ação 1 (Extração Doadora):</strong> Extrair um diodo SMD íntegro e compatível de uma placa do "Banco Doador de Componentes" (aquecimento inferior da placa doadora para não danificar o plástico do LED).</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>5.2 Ação 2 (Pasta Térmica e Polaridade):</strong> Renovar a pasta térmica sob a placa MCPCB (se houver sido removida) e soldar o diodo SMD respeitando rigorosamente a marcação de polaridade (+ Ânodo menor / − Cátodo maior).</span>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 cursor-pointer select-none">
+                                <input type="checkbox" class="step-check mt-0.5 w-4 h-4 accent-emerald-500 rounded">
+                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300"><strong>5.3 Ação 3 (Conferência a 7V e Retorno):</strong> Testar o novo LED soldado com a fonte de 7V para confirmar o contato e enviar a lâmpada (ainda aberta) para a <strong>Etapa 2</strong>.</span>
+                            </label>
+                        </div>
+
+                        <div class="lg:col-span-5 p-5 rounded-xl bg-amber-500/15 border-2 border-dashed border-amber-500 flex flex-col justify-between space-y-3">
+                            <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-sm">
+                                <i data-lucide="alert-octagon" class="w-5 h-5 shrink-0"></i>
+                                <span>REGRA CRÍTICA DE RETORNO OBRIGATÓRIO</span>
+                            </div>
+                            <p class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed">
+                                A lâmpada reparada <strong>NÃO vai direto para doação</strong> e <strong>NÃO deve ter seu bulbo fechado agora</strong>!
+                            </p>
+                            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                                Ela retorna obrigatoriamente para a <strong>Etapa 2 (Teste de Estresse de 48h)</strong>. O fechamento definitivo do bulbo difusor só ocorre se ela sobreviver às 48 horas contínuas sem falhas térmicas.
+                            </p>
+                            <button onclick="jumpToStep('etapa2', true)" class="w-full py-2 px-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition flex items-center justify-center gap-1.5">
+                                <i data-lucide="corner-left-up" class="w-4 h-4"></i> Simular Retorno da Etapa 5 ➔ Etapa 2 no Assistente
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mt-16 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+            <div class="flex items-center gap-2">
+                <i data-lucide="recycle" class="w-4 h-4 text-emerald-500"></i>
+                <span><strong>EcoLEDLab</strong> — Guia Prático de Sistematização para Recuperação de Lâmpadas LED</span>
+            </div>
+            <div class="font-mono">
+                Manufatura Reversa • Economia Circular • Doação Solidária
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT: STATE MACHINE & INTERACTIVITY  -->
+    <!-- ========================================== -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // ----------------------------------------------------
+        // 1. THEME TOGGLE (DARK / LIGHT MODE)
+        // ----------------------------------------------------
+        const htmlEl = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const iconLight = document.getElementById('theme-icon-light');
+        const iconDark = document.getElementById('theme-icon-dark');
+
+        function syncThemeIcons() {
+            if (htmlEl.classList.contains('dark')) {
+                iconLight.classList.remove('hidden');
+                iconDark.classList.add('hidden');
+            } else {
+                iconLight.classList.add('hidden');
+                iconDark.classList.remove('hidden');
+            }
+        }
+        syncThemeIcons();
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlEl.classList.toggle('dark');
+            syncThemeIcons();
+        });
+
+        // ----------------------------------------------------
+        // 2. TOOLS & PPE CHECKLIST PROGRESS
+        // ----------------------------------------------------
+        function updateToolsProgress() {
+            const checks = document.querySelectorAll('.tool-check');
+            const total = checks.length;
+            let checkedCount = 0;
+            checks.forEach(c => { if (c.checked) checkedCount++; });
+
+            const pct = Math.round((checkedCount / total) * 100);
+            document.getElementById('tools-progress-bar').style.width = pct + '%';
+            const badge = document.getElementById('tools-progress-text');
+            badge.textContent = `${checkedCount}/${total} Prontos (${pct}%)`;
+
+            if (checkedCount === total) {
+                badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500 text-slate-950';
+            } else {
+                badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500';
+            }
+        }
+
+        function checkAllTools() {
+            const checks = document.querySelectorAll('.tool-check');
+            const allChecked = Array.from(checks).every(c => c.checked);
+            checks.forEach(c => c.checked = !allChecked);
+            updateToolsProgress();
+        }
+
+        function resetStepChecklists() {
+            document.querySelectorAll('.step-check').forEach(c => c.checked = false);
+        }
+
+        // ----------------------------------------------------
+        // 3. INTERACTIVE BENCH WIZARD ("MODO BANCADA")
+        // ----------------------------------------------------
+        let sessionStats = {
+            donated: 0,
+            discarded: 0
+        };
+
+        let lampState = {
+            currentStage: 'etapa1',
+            group: 'Não Alocada',
+            bulbOpen: false,
+            cameFromRepair: false,
+            powerMode: 'Rede AC (Triagem)',
+            history: []
+        };
+
+        function addHistory(entryText, colorClass = 'text-slate-500 dark:text-slate-400') {
+            const time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            lampState.history.unshift({ time, text: entryText, colorClass });
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('wiz-history');
+            container.innerHTML = lampState.history.map((h, idx) => `
+                <div class="flex items-start gap-2 py-1 border-b border-slate-200/60 dark:border-slate-800/60 ${idx === 0 ? 'font-bold' : 'opacity-75'}">
+                    <span class="text-[10px] text-slate-400 shrink-0">[${h.time}]</span>
+                    <span class="${h.colorClass}">${h.text}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateStatusPanel() {
+            document.getElementById('stat-group').textContent = lampState.group;
+            document.getElementById('stat-bulb').textContent = lampState.bulbOpen ? 'Aberto (Difusor Removido)' : 'Fechado (Selado)';
+            document.getElementById('stat-bulb').className = lampState.bulbOpen
+                ? 'font-bold text-amber-500'
+                : 'font-bold text-emerald-600 dark:text-emerald-400';
+
+            document.getElementById('stat-power').textContent = lampState.powerMode;
+            document.getElementById('stat-repaired').textContent = lampState.cameFromRepair ? 'Sim (LED SMD Substituído)' : 'Nenhum';
+
+            const repairFlag = document.getElementById('wiz-repair-flag');
+            if (lampState.cameFromRepair) {
+                repairFlag.classList.remove('hidden');
+                repairFlag.classList.add('inline-flex');
+            } else {
+                repairFlag.classList.add('hidden');
+                repairFlag.classList.remove('inline-flex');
+            }
+        }
+
+        function renderWizardStage() {
+            updateStatusPanel();
+            const badgeStage = document.getElementById('wiz-badge-stage');
+            const badgeGroup = document.getElementById('wiz-badge-group');
+            const body = document.getElementById('wiz-body');
+            const actions = document.getElementById('wiz-actions');
+
+            // Highlight corresponding detailed card
+            document.querySelectorAll('[id^="card-etapa"]').forEach(el => el.classList.remove('step-highlight'));
+            const activeCard = document.getElementById(`card-${lampState.currentStage}`);
+            if (activeCard) activeCard.classList.add('step-highlight');
+
+            if (lampState.currentStage === 'etapa1') {
+                badgeStage.textContent = 'ETAPA 1 • TRIAGEM INICIAL';
+                badgeStage.className = 'px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-amber-500/15 text-amber-500 border border-amber-500/30';
+                badgeGroup.textContent = 'Coleta ➔ Triagem AC';
+
+                body.innerHTML = `
+                    <div class="space-y-3">
+                        <h3 class="text-xl sm:text-2xl font-extrabold">Conectar à Rede Elétrica e Observar</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            Rosqueie a lâmpada coletada em um bocal energizado na rede elétrica (127V/220V) e realize a observação visual direta (sem ferramentas especiais).
+                        </p>
+                        <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong>Regra Crítica de Triagem:</strong> Lâmpadas com <em>baixa intensidade luminosa</em> (fracas) ou <em>cintilação intermitente</em> (piscando) <strong>NÃO</strong> são aprovadas! Elas devem ir imediatamente para o <strong>Grupo B</strong>.
+                            </div>
+                        </div>
+                        <p class="text-base font-bold pt-2 text-slate-900 dark:text-white">❓ Pergunta de Decisão: A lâmpada acende plenamente e sem piscar?</p>
+                    </div>
+                `;
+
+                actions.innerHTML = `
+                    <button onclick="handleDecision('etapa1_sim')" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i> SIM, Acende Plenamente (Alocar no Grupo A)
+                    </button>
+                    <button onclick="handleDecision('etapa1_nao')" class="px-5 py-3 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i> NÃO / Luz Fraca / Piscando (Alocar no Grupo B)
+                    </button>
+                `;
+            }
+
+            else if (lampState.currentStage === 'etapa2') {
+                badgeStage.textContent = 'ETAPA 2 • TESTE DE ESTRESSE (BURN-IN 48H)';
+                badgeStage.className = 'px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-emerald-500/15 text-emerald-500 border border-emerald-500/30';
+                badgeGroup.textContent = lampState.cameFromRepair ? 'Retorno Pós-Reparo (Etapa 5)' : 'Grupo A (Previamente Funcional)';
+
+                body.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-mono text-xs font-bold">⏱ 48 HORAS CONTÍNUAS</span>
+                            ${lampState.cameFromRepair ? '<span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono text-xs font-bold">Bulbo Ainda Aberto!</span>' : ''}
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-extrabold">Ensaio de Saturação Térmica (Burn-in)</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            Mantenha a unidade acesa <strong>ininterruptamente por 48 horas</strong> em bancada monitorada. Este ensaio garante que a solda e os demais diodos suportem o equilíbrio térmico real de operação.
+                        </p>
+                        ${lampState.cameFromRepair ? `
+                            <div class="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-xs text-sky-800 dark:text-sky-200">
+                                <strong>Atenção (Unidade vinda da Etapa 5):</strong> Como esta lâmpada foi reparada, ela está realizando o teste de 48h com o bulbo aberto. <strong>Não toque na placa energizada!</strong> Se for aprovada, o próximo passo obrigatório será fechar o bulbo.
+                            </div>
+                        ` : ''}
+                        <p class="text-base font-bold pt-2 text-slate-900 dark:text-white">❓ Pergunta de Decisão: Aprovada após as 48h sem falhas (fluxo uniforme, sem oscilação, integridade térmica)?</p>
+                    </div>
+                `;
+
+                actions.innerHTML = `
+                    <button onclick="handleDecision('etapa2_sim')" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="award" class="w-4 h-4"></i> SIM, Aprovada nas 48h (${lampState.bulbOpen ? 'Ir p/ Fechamento do Bulbo' : 'Apta para Doação'})
+                    </button>
+                    <button onclick="handleDecision('etapa2_nao')" class="px-5 py-3 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i> NÃO, Falhou durante as 48h (Remanejar p/ Grupo B)
+                    </button>
+                `;
+            }
+
+            else if (lampState.currentStage === 'etapa3') {
+                badgeStage.textContent = 'ETAPA 3 • INSPEÇÃO E ABERTURA';
+                badgeStage.className = 'px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-coral-500/15 text-coral-500 border border-coral-500/30';
+                badgeGroup.textContent = 'Exclusivo Grupo B';
+
+                body.innerHTML = `
+                    <div class="space-y-3">
+                        <h3 class="text-xl sm:text-2xl font-extrabold">Abertura Mecânica, Inspeção Visual e Teste a 7V</h3>
+                        <ol class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 list-decimal pl-5">
+                            <li><strong>Abertura Mecânica:</strong> Com a lâmpada desconectada da tomada, aplique torque manual em sentido <strong>anti-horário</strong> ou insira a <strong>espátula metálica</strong> na junção lateral para remover o bulbo difusor.</li>
+                            <li><strong>Inspeção Visual:</strong> Procure <strong>pontos escurecidos ("ponto preto")</strong> na superfície amarelada dos diodos SMD.</li>
+                            <li><strong>Teste de Bancada (7 V DC):</strong> Se não houver ponto preto visível, teste cada LED individualmente com a fonte de bancada ajustada inicialmente em <strong>7 V</strong>.</li>
+                        </ol>
+                        <p class="text-base font-bold pt-2 text-slate-900 dark:text-white">❓ Pergunta de Decisão: A falha é restrita à matriz de LEDs (LED queimado encontrado)?</p>
+                    </div>
+                `;
+
+                actions.innerHTML = `
+                    <button onclick="handleDecision('etapa3_sim')" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="wrench" class="w-4 h-4"></i> SIM, Falha nos LEDs (Avançar p/ Etapa 4)
+                    </button>
+                    <button onclick="handleDecision('etapa3_nao')" class="px-5 py-3 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="cpu" class="w-4 h-4"></i> NÃO, Defeito no Circuito Driver (Fora do Escopo)
+                    </button>
+                `;
+            }
+
+            else if (lampState.currentStage === 'etapa4') {
+                badgeStage.textContent = 'ETAPA 4 • REMOÇÃO DO COMPONENTE AVARIADO';
+                badgeStage.className = 'px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-amber-500/15 text-amber-500 border border-amber-500/30';
+                badgeGroup.textContent = 'Grupo B • Retrabalho SMD';
+
+                body.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-0.5 rounded bg-amber-500 text-slate-950 font-mono text-xs font-bold">🔥 MÍNIMO 400 °C</span>
+                            <span class="px-2.5 py-0.5 rounded bg-purple-500/20 text-purple-400 font-mono text-xs font-bold">🔪 PONTA FACA (K-KNIFE)</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-extrabold">Rompimento do Fósforo e Fusão Direta</h3>
+                        <ol class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 list-decimal pl-5">
+                            <li><strong>Ação 1:</strong> Rompa mecanicamente a camada superior de encapsulamento de fósforo (parte amarela) do LED queimado usando a espátula/pinça para expor seu terminal metálico interno.</li>
+                            <li><strong>Ação 2:</strong> Com o ferro de solda equipado com <strong>ponta faca (K-knife) a ≥ 400°C</strong>, encoste a face laminada diretamente sobre o terminal metálico exposto para fundir a solda e remover rapidamente a base residual sem danificar a trilha da placa.</li>
+                        </ol>
+                    </div>
+                `;
+
+                actions.innerHTML = `
+                    <button onclick="handleDecision('etapa4_concluida')" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i> LED Queimado Removido e Trilha Limpa (Ir p/ Etapa 5)
+                    </button>
+                `;
+            }
+
+            else if (lampState.currentStage === 'etapa5') {
+                badgeStage.textContent = 'ETAPA 5 • SUBSTITUIÇÃO E RETORNO AO TESTE';
+                badgeStage.className = 'px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-sky-500/15 text-sky-500 border border-sky-500/30';
+                badgeGroup.textContent = 'Grupo B • Soldagem Doador';
+
+                body.innerHTML = `
+                    <div class="space-y-3">
+                        <h3 class="text-xl sm:text-2xl font-extrabold">Soldagem do Diodo Doador e Retorno ao Burn-in</h3>
+                        <ol class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 list-decimal pl-5">
+                            <li><strong>Ação 1:</strong> Extraia um diodo SMD funcional do <strong>"Banco Doador de Componentes"</strong>.</li>
+                            <li><strong>Ação 2:</strong> Renove a pasta térmica da base da placa (se necessário) e solde o diodo SMD respeitando rigorosamente a <strong>marcação de polaridade (+ Ânodo menor / − Cátodo maior)</strong>.</li>
+                        </ol>
+                        <div class="p-4 rounded-xl bg-amber-500/15 border border-amber-500/40 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
+                            <i data-lucide="repeat" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong>Regra de Retorno Obrigatório:</strong> A lâmpada reparada <strong>NÃO</strong> vai direto para doação! Mantenha o bulbo aberto e retorne-a obrigatoriamente para a <strong>Etapa 2 (Burn-in de 48h)</strong>.
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                actions.innerHTML = `
+                    <button onclick="handleDecision('etapa5_concluida')" class="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="corner-left-up" class="w-4 h-4"></i> Diodo Soldado! Retornar Obrigariamente à Etapa 2 (48h)
+                    </button>
+                `;
+            }
+
+            else if (lampState.currentStage === 'fim_verde') {
+                badgeStage.textContent = 'FIM VERDE • LÂMPADA RECUPERADA';
+                badgeStage.className = 'px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-emerald-500 text-slate-950';
+                badgeGroup.textContent = 'Aprovada no Burn-in 48h';
+
+                body.innerHTML = `
+                    <div class="p-6 rounded-2xl bg-emerald-500/10 border-2 border-emerald-500 space-y-3">
+                        <div class="flex items-center gap-3 text-emerald-600 dark:text-emerald-400">
+                            <i data-lucide="check-circle-2" class="w-8 h-8 shrink-0"></i>
+                            <div>
+                                <h3 class="text-xl sm:text-2xl font-extrabold">Apta para Reuso e Doação Solidária!</h3>
+                                <p class="text-xs font-mono uppercase">Ciclo concluído com sucesso e validação térmica de 48h</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                            ${lampState.cameFromRepair
+                                ? '✔ <strong>Fechamento do Bulbo Realizado:</strong> O bulbo difusor foi devidamente fechado após a aprovação da unidade reparada nas 48h de estresse.'
+                                : '✔ <strong>Unidade Original do Grupo A:</strong> A lâmpada já estava com o bulbo fechado e comprovou 100% de integridade durante as 48h.'}
+                        </p>
+                    </div>
+                `;
+
+                actions.innerHTML = `
+                    <button onclick="resetWizard()" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Processar Próxima Lâmpada do Lote
+                    </button>
+                `;
+            }
+
+            else if (lampState.currentStage === 'fim_vermelho') {
+                badgeStage.textContent = 'FIM VERMELHO • FORA DO ESCOPO';
+                badgeStage.className = 'px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-coral-500 text-white';
+                badgeGroup.textContent = 'Defeito no Circuito Driver';
+
+                body.innerHTML = `
+                    <div class="p-6 rounded-2xl bg-coral-500/10 border-2 border-coral-500 space-y-3">
+                        <div class="flex items-center gap-3 text-coral-600 dark:text-coral-400">
+                            <i data-lucide="package-plus" class="w-8 h-8 shrink-0"></i>
+                            <div>
+                                <h3 class="text-xl sm:text-2xl font-extrabold">Destinar ao Banco Doador de Componentes ou Descarte</h3>
+                                <p class="text-xs font-mono uppercase">Falha no Circuito Driver AC/DC • Matriz de LEDs Íntegra</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                            Como o defeito reside no circuito driver interno (fora do escopo de reparo), <strong>preserve a placa MCPCB no Banco Doador de Componentes</strong> para fornecer diodos SMD saudáveis para outras lâmpadas na Etapa 5, e encaminhe a carcaça/driver para descarte ambientalmente adequado.
+                        </p>
+                    </div>
+                `;
+
+                actions.innerHTML = `
+                    <button onclick="resetWizard()" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Processar Próxima Lâmpada do Lote
+                    </button>
+                `;
+            }
+
+            lucide.createIcons();
+        }
+
+        function handleDecision(action) {
+            if (action === 'etapa1_sim') {
+                lampState.group = 'Grupo A (Funcional)';
+                lampState.currentStage = 'etapa2';
+                lampState.powerMode = 'Rede AC (Burn-in 48h)';
+                addHistory('Etapa 1 = SIM ➔ Alocada no Grupo A. Enviada para Etapa 2 (48h).', 'text-emerald-500');
+            }
+            else if (action === 'etapa1_nao') {
+                lampState.group = 'Grupo B (Não Funcional)';
+                lampState.currentStage = 'etapa3';
+                lampState.bulbOpen = true;
+                lampState.powerMode = 'Bancada 7V DC (Desenergizada AC)';
+                addHistory('Etapa 1 = NÃO (Apagada/Piscando/Fraca) ➔ Alocada no Grupo B (Etapa 3).', 'text-coral-500');
+            }
+            else if (action === 'etapa2_sim') {
+                if (lampState.bulbOpen) {
+                    lampState.bulbOpen = false;
+                    addHistory('Etapa 2 = SIM (Aprovada 48h) ➔ Fechamento do Bulbo realizado!', 'text-emerald-500');
+                } else {
+                    addHistory('Etapa 2 = SIM (Aprovada 48h) ➔ Fluxo e integridade térmica validados.', 'text-emerald-500');
+                }
+                lampState.currentStage = 'fim_verde';
+                lampState.powerMode = 'Pronta p/ Uso (Estoque Doação)';
+                sessionStats.donated++;
+                document.getElementById('count-donated').textContent = sessionStats.donated;
+                addHistory('FIM VERDE: Unidade Apta para Reuso e Doação Solidária.', 'text-emerald-500');
+            }
+            else if (action === 'etapa2_nao') {
+                lampState.group = 'Grupo B (Reprovada no Burn-in)';
+                lampState.currentStage = 'etapa3';
+                lampState.bulbOpen = true;
+                lampState.powerMode = 'Bancada 7V DC (Inspeção)';
+                addHistory('Etapa 2 = NÃO (Falhou nas 48h) ➔ Remanejada para Grupo B (Etapa 3).', 'text-amber-500');
+            }
+            else if (action === 'etapa3_sim') {
+                lampState.currentStage = 'etapa4';
+                lampState.powerMode = 'Desconectada (Ferro ≥400°C)';
+                addHistory('Etapa 3 = SIM (Falha restrita aos LEDs) ➔ Avança para Etapa 4.', 'text-emerald-500');
+            }
+            else if (action === 'etapa3_nao') {
+                lampState.currentStage = 'fim_vermelho';
+                lampState.powerMode = 'Desenergizada (Desmonte)';
+                sessionStats.discarded++;
+                document.getElementById('count-discarded').textContent = sessionStats.discarded;
+                addHistory('Etapa 3 = NÃO (Defeito no Driver) ➔ FIM VERMELHO (Banco Doador / Descarte).', 'text-coral-500');
+            }
+            else if (action === 'etapa4_concluida') {
+                lampState.currentStage = 'etapa5';
+                lampState.powerMode = 'Soldagem SMD + Teste 7V';
+                addHistory('Etapa 4 Concluída: Fósforo rompido e base removida a ≥400°C com K-Knife.', 'text-amber-500');
+            }
+            else if (action === 'etapa5_concluida') {
+                lampState.cameFromRepair = true;
+                lampState.bulbOpen = true;
+                lampState.group = 'Em Validação Pós-Reparo';
+                lampState.currentStage = 'etapa2';
+                lampState.powerMode = 'Rede AC (Burn-in 48h Aberta)';
+                addHistory('Etapa 5 Concluída: Diodo doador soldado ➔ Retorno obrigatório à Etapa 2 (48h).', 'text-sky-500');
+            }
+
+            renderWizardStage();
+        }
+
+        function resetWizard() {
+            lampState = {
+                currentStage: 'etapa1',
+                group: 'Não Alocada',
+                bulbOpen: false,
+                cameFromRepair: false,
+                powerMode: 'Rede AC (Triagem)',
+                history: []
+            };
+            addHistory('Nova lâmpada coletada iniciada na bancada.', 'text-slate-400');
+            renderWizardStage();
+        }
+
+        function jumpToStep(stepId, simulateReturnFrom5 = false) {
+            lampState.currentStage = stepId;
+            if (stepId === 'etapa1') {
+                lampState.group = 'Triagem Inicial';
+                lampState.bulbOpen = false;
+                lampState.powerMode = 'Rede AC (Triagem)';
+            } else if (stepId === 'etapa2') {
+                if (simulateReturnFrom5) {
+                    lampState.cameFromRepair = true;
+                    lampState.bulbOpen = true;
+                    lampState.group = 'Retorno Etapa 5 (Pós-Reparo)';
+                } else {
+                    lampState.group = 'Grupo A / Em Burn-in';
+                }
+                lampState.powerMode = 'Rede AC (Burn-in 48h)';
+            } else if (stepId === 'etapa3') {
+                lampState.group = 'Grupo B (Não Funcional)';
+                lampState.bulbOpen = true;
+                lampState.powerMode = 'Bancada 7V DC';
+            } else if (stepId === 'etapa4') {
+                lampState.group = 'Grupo B (Remoção SMD)';
+                lampState.bulbOpen = true;
+                lampState.powerMode = 'Ferro K-Knife ≥400°C';
+            } else if (stepId === 'etapa5') {
+                lampState.group = 'Grupo B (Soldagem SMD)';
+                lampState.bulbOpen = true;
+                lampState.powerMode = 'Soldagem + Conferência 7V';
+            }
+
+            addHistory(`Navegação direta para ${stepId.toUpperCase()}.`, 'text-sky-400');
+            renderWizardStage();
+            document.getElementById('modo-bancada').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Start Wizard on Load
+        window.onload = function () {
+            resetWizard();
+        };
+    </script>
+</body>
+</html>
